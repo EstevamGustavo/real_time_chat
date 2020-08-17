@@ -35,6 +35,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   @SubscribeMessage('msgToServer')
   handleMessage(client: Socket, text: string): void {
     this.messages.push(text)
+    console.log(text);
+    
     this.wss.emit("msgToClient", this.messages)
+  }
+
+  @SubscribeMessage('saveUserName')
+  handlerUserName(client: Socket, text: string): void {
+    const index = this.usersList.indexOf(client.id)
+    this.usersList[index] = {id: client.id, userName: text}
+    this.wss.emit("usersList", this.usersList)
+    console.log(this.usersList);
+    
   }
 }
