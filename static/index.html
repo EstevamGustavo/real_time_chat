@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Real Time Chat</title>
+</head>
+
+<body>
+    <div id="v-app">
+        <h3>{{title}}</h3>
+        <form>
+            <input v-model="text">
+            <button type="submit" @click.prevent="sendMessage()">send</button>
+        </form>
+        <p>
+            <ul>
+                <li v-for="msg of messages">{{msg}}</li>
+            </ul>
+        </p>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: "#v-app",
+            data: {
+                title: "WebSockets",
+                text: "",
+                messages: []
+            },
+            methods: {
+                sendMessage() {
+                    this.messages.push(this.text)
+                    this.text = ""
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
