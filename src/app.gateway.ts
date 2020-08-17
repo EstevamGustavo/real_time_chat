@@ -8,19 +8,21 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private logger:Logger = new Logger("appGateway")
  
   handleDisconnect(client: Socket) {
-    throw new Error("Method not implemented.");
+    this.logger.log(`${client.id} disconnect!`)
   }
  
   handleConnection(client: Socket, ...args: any[]) {
-    throw new Error("Method not implemented.");
+    this.logger.log(`${client.id} connect!`)
   }
 
   afterInit(server: Server) {
-    this.logger.log("Gateway Connected!!")
+    this.logger.log("Gateway started!!")
   }
-  
+
   @SubscribeMessage('msgToServer')
   handleMessage(client: Socket, text: string): WsResponse<string> {
+    console.log(text);
+    
     return {event: "msgToClient" , data: text};
   }
 }
