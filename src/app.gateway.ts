@@ -17,7 +17,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     const index = this.usersList.indexOf(client.id)
     this.usersList.splice(index, 1)
     this.wss.emit("usersList", this.usersList)
-    
+   
     this.logger.log(`${client.id} disconnect!`)
   }
  
@@ -25,6 +25,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     client.emit("msgToClient" , this.messages)
     this.usersList.push(client.id)
     this.wss.emit("usersList", this.usersList)
+    this.messages.push({userName: "Robot" , text: `${client.id} has connected!!!`})
+    this.wss.emit("msgToClient", this.messages)
     this.logger.log(`${client.id} connect!`)
   }
 
@@ -35,8 +37,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   @SubscribeMessage('msgToServer')
   handleMessage(client: Socket, text: string): void {
     this.messages.push(text)
-    console.log(text);
-    
     this.wss.emit("msgToClient", this.messages)
   }
 
@@ -44,8 +44,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   handlerUserName(client: Socket, text: string): void {
     const index = this.usersList.indexOf(client.id)
     this.usersList[index] = {id: client.id, userName: text}
+    this.messages.push({userName: "Robot" , text: `${client.id} change your name to ${text}!`})
+    this.wss.emit("msgToClient", this.messages)
     this.wss.emit("usersList", this.usersList)
-    console.log(this.usersList);
-    
   }
 }
