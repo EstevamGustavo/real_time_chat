@@ -12,6 +12,13 @@
 
 <body>
     <div id="v-app">
+        <div class="userView">
+            <p>
+                <ul>
+                    <li v-for="user of userList">{{user}}</li>
+                </ul>
+            </p>
+        </div>
         <form id="chat">
             <input type="text" name="userName" placeholder="User Name" v-model="userName">
             <div class="messages">
@@ -21,9 +28,10 @@
                     </ul>
                 </p>
             </div>
-            <input name="message" placeholder="Type your message!!" v-model="text">
-            <button type="submit" @click.prevent="sendMessage()">send</button>
+            <input name="message" :disabled="userName == ''" placeholder="Type your message!!" v-model="text">
+            <button type="submit" :disabled="userName == ''" @click.prevent="sendMessage()">send</button>
         </form>
+        {{userList}}
     </div>
 
     <script>
@@ -34,7 +42,8 @@
                 socket: null,
                 title: "WebSockets",
                 text: "",
-                messages: []
+                messages: [],
+                userList: []
             },
             methods: {
                 sendMessage() {
@@ -45,14 +54,19 @@
                     this.text = ""
                 },
                 receiveMessage(msg) {
-                    console.log(`received => ${msg}`);
                     this.messages = msg
+                },
+                usersList(msg) {
+                    this.userList = msg
                 }
             },
-            created() {
+            mounted() {
                 this.socket = io('http://localhost:3000')
                 this.socket.on("msgToClient", msg => {
                     this.receiveMessage(msg)
+                })
+                this.socket.on("usersList", msg => {
+                    this.usersList(msg)
                 })
             }
         })

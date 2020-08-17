@@ -10,13 +10,21 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private logger:Logger = new Logger("appGateway")
 
   private messages: Array<any> = []
+
+  private usersList: Array<any> = []
  
   handleDisconnect(client: Socket) {
+    const index = this.usersList.indexOf(client.id)
+    this.usersList.splice(index, 1)
+    this.wss.emit("usersList", this.usersList)
+    
     this.logger.log(`${client.id} disconnect!`)
   }
  
   handleConnection(client: Socket, ...args: any[]) {
     client.emit("msgToClient" , this.messages)
+    this.usersList.push(client.id)
+    this.wss.emit("usersList", this.usersList)
     this.logger.log(`${client.id} connect!`)
   }
 
